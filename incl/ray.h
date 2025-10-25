@@ -1,0 +1,1 @@
+// klasa promenia światła
