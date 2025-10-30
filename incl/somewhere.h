@@ -1,4 +1,4 @@
-#pragma one
+#pragma once
 #include <cstdlib>
 
 //8.1
