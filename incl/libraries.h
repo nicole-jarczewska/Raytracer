@@ -16,5 +16,5 @@
 #include "ray.h"
 #include "vec.h"
 #include "objects.h"
-#include "somwhere.h"
+#include "somewhere.h"
 
