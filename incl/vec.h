@@ -1,4 +1,5 @@
 #pragma once
+#include "somewhere.h"
 
 class vec {
   public:
@@ -39,6 +40,14 @@ class vec {
 
     double length_squared() const {
         return elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2];
+    }
+
+    static vec random(){
+      return vec(rand_doub(), rand_doub(), rand_doub());
+    }
+    
+    static vec random(double min, double max){
+      return vec(rand_doub(min, max), rand_doub(min, max), rand_doub(min, max));
     }
 };
 
