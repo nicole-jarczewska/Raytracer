@@ -2,11 +2,9 @@
 using namespace std;
 #include "sdltamplate.h"
 
-
 int main(){
     int width=800;
     int height=400;
-    cout<<"P3\n"<<width<< " "<< height<<"\n255\n";
     sdltemplate::sdl("Ray Tracer", width, height);
     sdltemplate::loop();
     for (int y=height-1;y>=0;y--){
@@ -17,7 +15,6 @@ int main(){
             int ir=int(255.99*r);
             int ig=int(255.99*g);
             int ib=int(255.99*b);
-            cout<<ir<<" "<<ig<<" "<<ib<<"\n";
             sdltemplate::setDrawColor(sdltemplate::createColor(ir, ig, ib, 255));
             sdltemplate::drawPoint(x, height-y);
         }
@@ -26,3 +23,4 @@ int main(){
         sdltemplate::loop();
     }
 }
+
