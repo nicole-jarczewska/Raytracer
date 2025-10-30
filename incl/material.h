@@ -1,1 +1,7 @@
-// klasy materiałów, jak reagują na światło
+#pragma once
+#include "objects.h>
+
+class material {
+  public:
+    virtual ~material()=default;
+}
