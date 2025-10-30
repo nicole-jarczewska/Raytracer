@@ -9,7 +9,7 @@ struct IMAGE{
         : aspect_ratio(ar), width(w),
           height(int(w / ar))
     {
-        if (height < 1) height = 1;
+        height = (height < 1) ? 1 : height;
     }
 };
 

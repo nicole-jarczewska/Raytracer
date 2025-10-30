@@ -1,5 +1,7 @@
 #include <cmath>
 #include <vector>
+#include <memory>
+#include <limits>
 
 //sdl
 #define SDL_MAIN_HANDLED
@@ -11,8 +13,7 @@
 #include "camera.h"
 #include "color.h"
 #include "material.h"
-#include "objects.h"
 #include "ray.h"
-#include "objects.h"
 #include "vec.h"
+#include "objects.h"
 

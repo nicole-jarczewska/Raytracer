@@ -31,6 +31,11 @@ int main(){
 // int main() {
 //     IMAGE image = {1000, 16.0 / 9.0};
 
+//     hittable_list world;
+
+//     world.add(std::make_shared<sphere>(point(0,0,-1), 0.5));
+//     world.add(std::make_shared<sphere>(point(0,-100.5,-1), 100));
+
 //     auto focal_length = 1.0;
 //     auto viewport_height = 2.0;
 //     auto viewport_width = viewport_height * (double(image.width) / image.height);
@@ -56,7 +61,7 @@ int main(){
 //         for (int i = 0; i < image.width; i++) {
 //             auto pixel_center = pixel00_loc + i * pixel_delta_u + j * pixel_delta_v;
 //             ray r(camera_center, pixel_center - camera_center);
-//             color pixel_color = ray_color(r);
+//             color pixel_color = ray_color(r, world);
 
 //             int index = (j * image.width + i) * 3;
 //             pixels[index] = static_cast<int>(255.999 * pixel_color.x()); // red
