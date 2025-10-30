@@ -38,10 +38,6 @@ class vec {
         return std::sqrt(elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2]);
     }
 
-    double length_squared() const {
-        return elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2];
-    }
-
     static vec random(){
       return vec(rand_doub(), rand_doub(), rand_doub());
     }
@@ -100,7 +96,7 @@ inline vec unit_vector(const vec& v) {
 inline vec random_unit_vector() {
   while (true){
     auto p= vec::random(-1, 1);
-    auto len_sq=p.length_squared();
+    auto len_sq=p.length();
     if (1e-160 < len_sq && len_sq <= 1){
       return p/sqrt(len_sq);
     }
