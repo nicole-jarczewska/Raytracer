@@ -101,7 +101,7 @@ inline vec random_unit_vector() {
   while (true){
     auto p= vec::random(-1, 1);
     auto len_sq=p.length_squared();
-    if (len_sq<=1)
+    if (1e-160 < len_sq && len_sq <= 1)
       return p/sqrt(len_sq);
   }
 }
