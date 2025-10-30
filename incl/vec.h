@@ -96,3 +96,12 @@ inline vec cross(const vec& u, const vec& v) {
 inline vec unit_vector(const vec& v) {
     return v / v.length();
 }
+
+inline vec random_unit_vector() {
+  while (true){
+    auto p= vec::random(-1, 1);
+    auto len_sq=p.length_squared();
+    if (len_sq<=1)
+      return p/sqrt(len_sq);
+  }
+}
