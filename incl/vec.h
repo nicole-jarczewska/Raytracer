@@ -102,3 +102,11 @@ inline vec random_unit_vector() {
     }
   }
 }
+
+inline vec random_on_hemisphere(const vec& normal) {
+    vec on_unit_sphere = random_unit_vector();
+    if (dot(on_unit_sphere, normal) > 0.0)
+        return on_unit_sphere;
+    else
+        return -on_unit_sphere;
+}
