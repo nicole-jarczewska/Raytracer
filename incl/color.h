@@ -9,7 +9,8 @@ color ray_color(const ray& r, const hittable& world) {
     const double infinity = std::numeric_limits<double>::infinity();
     hit_record rec;
     if (world.hit(r, 0, infinity, rec)) {
-        return 0.5 * (rec.normal + color(1,1,1));
+        vec direction = random_on_hemisphere(rec.normal);
+        return 0.5 * ray_color(ray(rec.p, direction), world);
     }
 
     vec unit_direction = unit_vector(r.direction());
