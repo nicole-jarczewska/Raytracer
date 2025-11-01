@@ -4,4 +4,4 @@
 class material {
   public:
     virtual ~material()=default;
-}
+};

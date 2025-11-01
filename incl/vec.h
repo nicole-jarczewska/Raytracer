@@ -38,6 +38,10 @@ class vec {
         return std::sqrt(elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2]);
     }
 
+    double length_squared() const {
+        return elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2];
+    }
+
     static vec random(){
       return vec(rand_doub(), rand_doub(), rand_doub());
     }
@@ -48,6 +52,7 @@ class vec {
 };
 
 using point = vec;
+using color = vec;
 
 inline std::ostream& operator<<(std::ostream& out, const vec& v) {
     return out << v.elem[0] << ' ' << v.elem[1] << ' ' << v.elem[2];

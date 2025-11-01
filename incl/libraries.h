@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <limits>
+#include <algorithm>
 
 //sdl
 #define SDL_MAIN_HANDLED
@@ -17,4 +18,5 @@
 #include "vec.h"
 #include "objects.h"
 #include "somewhere.h"
+#include "hit.h"
 
