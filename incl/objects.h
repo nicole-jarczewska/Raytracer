@@ -5,7 +5,7 @@ class sphere : public hittable {
   public:
     sphere(const point& center, double radius) : center(center), radius(std::fmax(0,radius)) {}
 
-    bool hit(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const override {
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         vec oc = center - r.origin();
         auto a = r.direction().length_squared();
         auto h = dot(r.direction(), oc);
@@ -18,9 +18,9 @@ class sphere : public hittable {
         auto sqrtd = std::sqrt(discriminant);
 
         auto root = (h - sqrtd) / a;
-        if (root <= ray_tmin || ray_tmax <= root) {
+        if (!ray_t.surrounds(root)) {
             root = (h + sqrtd) / a;
-            if (root <= ray_tmin || ray_tmax <= root)
+            if (!ray_t.surrounds(root))
                 return false;
         }
 
@@ -42,38 +42,39 @@ public:
     cylinder(point center, double radius, double height, bool capped = true)
         : cen(center), rad(radius), h(height), caps(capped) {}
 
-    bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override {
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         vec d = r.direction();
         vec o = r.origin() - cen;
 
-        //x^2 + z^2 = r^2
         double a = d.x()*d.x() + d.z()*d.z();
         double b = 2 * (o.x()*d.x() + o.z()*d.z());
         double c = o.x()*o.x() + o.z()*o.z() - rad*rad;
 
         double discriminant = b*b - 4*a*c;
         bool hit_anything = false;
-        double best_t = t_max;
-        hit_record temp_rec;
+        double closest = ray_t.max;
 
         if (discriminant >= 0) {
             double sqrtd = sqrt(discriminant);
+
             double root = (-b - sqrtd) / (2*a);
-            if (check_cylinder_root(r, root, t_min, best_t, temp_rec))
-                { best_t = temp_rec.t; rec = temp_rec; hit_anything = true; }
+            if (check_cylinder_root(r, root, ray_t.min, closest, rec)) {
+                closest = rec.t; hit_anything = true;
+            }
 
             root = (-b + sqrtd) / (2*a);
-            if (check_cylinder_root(r, root, t_min, best_t, temp_rec))
-                { best_t = temp_rec.t; rec = temp_rec; hit_anything = true; }
+            if (check_cylinder_root(r, root, ray_t.min, closest, rec)) {
+                closest = rec.t; hit_anything = true;
+            }
         }
 
         if (caps) {
-            double t_cap;
-            if (intersect_cap(r, 0, t_min, best_t, temp_rec)) {
-                best_t = temp_rec.t; rec = temp_rec; hit_anything = true;
+            hit_record temp;
+            if (intersect_cap(r, 0, ray_t.min, closest, temp)) {
+                rec = temp; closest = temp.t; hit_anything = true;
             }
-            if (intersect_cap(r, h, t_min, best_t, temp_rec)) {
-                best_t = temp_rec.t; rec = temp_rec; hit_anything = true;
+            if (intersect_cap(r, h, ray_t.min, closest, temp)) {
+                rec = temp; closest = temp.t; hit_anything = true;
             }
         }
 
@@ -88,6 +89,7 @@ private:
 
     bool check_cylinder_root(const ray& r, double t, double t_min, double t_max, hit_record& rec) const {
         if (t < t_min || t > t_max) return false;
+
         point p = r.at(t);
         double y = p.y() - cen.y();
         if (y < 0 || y > h) return false;
@@ -123,7 +125,7 @@ public:
     cone(point tip, double radius, double height, bool capped = true)
         : tip(tip), rad(radius), h(height), caps(capped) {}
 
-    bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override {
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         vec d = r.direction();
         vec o = r.origin() - tip;
 
@@ -136,32 +138,33 @@ public:
 
         double discriminant = b*b - 4*a*c;
         bool hit_any = false;
-        double t_best = t_max;
-        hit_record temp_rec;
+        double closest = ray_t.max;
+        hit_record tmp;
 
         if (discriminant >= 0) {
             double sqrtd = sqrt(discriminant);
 
             double root = (-b - sqrtd) / (2*a);
-            if (check_root(r, root, t_min, t_best, temp_rec)) {
-                t_best = temp_rec.t; rec = temp_rec; hit_any = true;
+            if (check_root(r, root, ray_t.min, closest, tmp)) {
+                rec = tmp; closest = tmp.t; hit_any = true;
             }
 
             root = (-b + sqrtd) / (2*a);
-            if (check_root(r, root, t_min, t_best, temp_rec)) {
-                t_best = temp_rec.t; rec = temp_rec; hit_any = true;
+            if (check_root(r, root, ray_t.min, closest, tmp)) {
+                rec = tmp; closest = tmp.t; hit_any = true;
             }
         }
 
         if (caps) {
             double y_plane = tip.y() - h;
             double t = (y_plane - r.origin().y()) / r.direction().y();
-            if (t > t_min && t < t_best) {
+            if (t > ray_t.min && t < closest) {
                 point p = r.at(t);
                 if ((p - point(tip.x(), y_plane, tip.z())).length_squared() <= rad*rad) {
                     rec.t = t;
                     rec.p = p;
                     rec.set_face_normal(r, vec(0, -1, 0));
+                    closest = t;
                     hit_any = true;
                 }
             }

@@ -3,6 +3,8 @@
 #include <memory>
 #include <limits>
 #include <algorithm>
+#include <cstdlib>
+#include <random>
 
 //sdl
 #define SDL_MAIN_HANDLED
@@ -19,4 +21,6 @@
 #include "objects.h"
 #include "somewhere.h"
 #include "hit.h"
+//#include "utility.h"
+//#include "interval.h"
 

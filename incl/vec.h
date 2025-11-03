@@ -1,5 +1,6 @@
 #pragma once
 #include "somewhere.h"
+#include "utility.h"
 
 class vec {
   public:
@@ -42,12 +43,12 @@ class vec {
         return elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2];
     }
 
-    static vec random(){
-      return vec(rand_doub(), rand_doub(), rand_doub());
+    static vec random() {
+        return vec(random_double(), random_double(), random_double());
     }
-    
-    static vec random(double min, double max){
-      return vec(rand_doub(min, max), rand_doub(min, max), rand_doub(min, max));
+
+    static vec random(double min, double max) {
+        return vec(random_double(min,max), random_double(min,max), random_double(min,max));
     }
 };
 
@@ -99,13 +100,12 @@ inline vec unit_vector(const vec& v) {
 }
 
 inline vec random_unit_vector() {
-  while (true){
-    auto p= vec::random(-1, 1);
-    auto len_sq=p.length();
-    if (1e-160 < len_sq && len_sq <= 1){
-      return p/sqrt(len_sq);
+    while (true) {
+        auto p = vec::random(-1,1);
+        auto lensq = p.length_squared();
+        if (1e-160 < lensq && lensq <= 1)
+            return p / sqrt(lensq);
     }
-  }
 }
 
 inline vec random_on_hemisphere(const vec& normal) {

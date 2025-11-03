@@ -37,10 +37,11 @@ int main() {
     hittable_list world;
 
     //world.add(std::make_shared<sphere>(point(1,0,-1), 0.7)); // test square // where, size
-    //world.add(std::make_shared<cylinder>(point(0,0,-1), 0.1, 0.2, true));
-    world.add(std::make_shared<cone>(point(1,0,-1), 0.4, 0.3, true));
+    world.add(std::make_shared<cylinder>(point(0,0,-1), 0.1, 0.2, true));
+    world.add(std::make_shared<cone>(point(1, 0.4,-1), 0.4, 0.7, true));
     //world.add(std::make_shared<cone>(point(1, 2, -3), 1.0, 2.0, true));
     //world.add(std::make_shared<sphere>(point(0,-100.5,-1), 100)); //background
+
     cam.render(world);
     handle_image(cam.sdl_image);
 

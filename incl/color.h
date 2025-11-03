@@ -5,12 +5,15 @@
 
 using color = vec;
 
-color ray_color(const ray& r, const hittable& world) {
-    const double infinity = std::numeric_limits<double>::infinity();
+color ray_color(const ray& r, int depth, const hittable& world) {
+    if (depth <= 0)
+            return color(0,0,0);
+
     hit_record rec;
-    if (world.hit(r, 0, infinity, rec)) {
+    if (world.hit(r, interval(0, infinity), rec)) {
         vec direction = random_on_hemisphere(rec.normal);
-        return 0.5 * ray_color(ray(rec.p, direction), world);
+        return 0.5 * ray_color(ray(rec.p, direction), depth-1, world);
+        //return 0.5 * (rec.normal + color(1,1,1));
     }
 
     vec unit_direction = unit_vector(r.direction());
