@@ -10,8 +10,8 @@ color ray_color(const ray& r, int depth, const hittable& world) {
             return color(0,0,0);
 
     hit_record rec;
-    if (world.hit(r, interval(0, infinity), rec)) {
-        vec direction = random_on_hemisphere(rec.normal);
+    if (world.hit(r, interval(0.001, infinity), rec)) {
+        vec direction = rec.normal + random_on_hemisphere();
         return 0.5 * ray_color(ray(rec.p, direction), depth-1, world);
         //return 0.5 * (rec.normal + color(1,1,1));
     }
