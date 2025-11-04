@@ -10,6 +10,12 @@ class camera {
     int samples_per_pixel = 10;
     int max_depth = 10;
 
+    double linear_to_gamma(double linear_comp){
+        if (linear_comp > 0)
+          return std::sqrt(linear_comp);
+        return 0;
+    }
+
     void render(const hittable& world) {
         initialize();
         std::vector<unsigned char> pixels(image.width * image.height * 3);
@@ -23,6 +29,9 @@ class camera {
                 }
                 pixel_color *= pixel_samples_scale;
                 int index = (j * image.width + i) * 3;
+                pixels[index]=linear_to_gamma(pixels[index]); // red
+                pixels[index + 1]=linear_to_gamma(pixels[index + 1]); // green
+                pixels[index + 2]=linear_to_gamma(pixels[index + 2]); // blue
                 static const interval intensity(0.000, 0.999);
                 pixels[index] = static_cast<int>(256 * intensity.clamp(pixel_color.x())); // red
                 pixels[index + 1] = static_cast<int>(256 * intensity.clamp(pixel_color.y())); // grenn
