@@ -30,19 +30,27 @@
 
 int main() {
     camera cam;
+    // x + ---> w prawo, x - ---> w lewo
+    // y + ---> w góre, y - ---> w dół
+    // z + ---> do przodu, z - ---> do tyłu
+    cam.samples_per_pixel = 25;
+    cam.max_depth = 15;
 
-    cam.lookfrom = point(1,1,0);
-    cam.lookat = point(0,0,-1);
+    cam.lookfrom = point(1,0,-2);
+    cam.lookat = point(1,0,-1);
     cam.vup = vec(0,1,0);
-    cam.vfov = 20;
+    cam.vfov = 100;
+
+    cam.defocus_angle = 0.6;
+    cam.focus_dist = 1.5;
 
     hittable_list world;
 
-    //world.add(std::make_shared<sphere>(point(1,0,-1), 0.7)); // test square // where, size
-    world.add(std::make_shared<cylinder>(point(0,0,-1), 0.1, 0.2, true));
-    world.add(std::make_shared<cone>(point(1, 0.4,-1), 0.4, 0.7, true));
+    world.add(std::make_shared<sphere>(point(1, 0,-1), 0.5)); // test square // where, size
+    //world.add(std::make_shared<cylinder>(point(0,0,-1.5), 0.1, 0.2, true));
+    //world.add(std::make_shared<cone>(point(1, 0.4,-1), 0.4, 0.7, true));
     //world.add(std::make_shared<cone>(point(1, 2, -3), 1.0, 2.0, true));
-    //world.add(std::make_shared<sphere>(point(0,-100.5,-1), 100)); //background
+    world.add(std::make_shared<sphere>(point(0,-100.5,-1), 100)); //background
 
     cam.render(world);
     handle_image(cam.sdl_image);

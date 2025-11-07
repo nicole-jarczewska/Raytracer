@@ -115,3 +115,12 @@ inline vec random_on_hemisphere(const vec& normal) {
     else
         return -on_unit_sphere;
 }
+
+
+inline vec random_in_unit_disk() {
+    while (true) {
+        auto p = vec(random_double(-1,1), random_double(-1,1), 0);
+        if (p.length_squared() < 1)
+            return p;
+    }
+}
