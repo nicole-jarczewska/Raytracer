@@ -31,8 +31,10 @@
 int main() {
     camera cam;
 
-    //cam.image.aspect_ratio = 16.0 / 9.0;
-    //cam.image.width  = 1000;
+    cam.lookfrom = point(1,1,0);
+    cam.lookat = point(0,0,-1);
+    cam.vup = vec(0,1,0);
+    cam.vfov = 20;
 
     hittable_list world;
 

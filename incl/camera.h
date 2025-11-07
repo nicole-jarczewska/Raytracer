@@ -7,8 +7,14 @@ class camera {
   public:
     IMAGE image = {1000, 16.0 / 9.0}; //width, ratio
     SDL_IMAGE sdl_image = initiate_image(image); //create sdl window
+
     int samples_per_pixel = 10;
     int max_depth = 10;
+
+    double vfov = 90; //vertical view angle
+    point lookfrom = point(0,0,0);
+    point lookat = point(0,0,-1);
+    vec vup = vec(0,1,0);  
 
     double linear_to_gamma(double linear_comp){
         if (linear_comp > 0)
@@ -29,13 +35,15 @@ class camera {
                 }
                 pixel_color *= pixel_samples_scale;
                 int index = (j * image.width + i) * 3;
-                pixels[index]=linear_to_gamma(pixels[index]); // red
-                pixels[index + 1]=linear_to_gamma(pixels[index + 1]); // green
-                pixels[index + 2]=linear_to_gamma(pixels[index + 2]); // blue
+
+                auto r = linear_to_gamma(pixel_color.x()); // red
+                auto g = linear_to_gamma(pixel_color.y()); // green
+                auto b = linear_to_gamma(pixel_color.z()); // blue
+
                 static const interval intensity(0.000, 0.999);
-                pixels[index] = static_cast<int>(256 * intensity.clamp(pixel_color.x())); // red
-                pixels[index + 1] = static_cast<int>(256 * intensity.clamp(pixel_color.y())); // grenn
-                pixels[index + 2] = static_cast<int>(256 * intensity.clamp(pixel_color.z())); // blue
+                pixels[index] = static_cast<int>(256 * intensity.clamp(r));
+                pixels[index + 1] = static_cast<int>(256 * intensity.clamp(g));
+                pixels[index + 2] = static_cast<int>(256 * intensity.clamp(b));
             }
         }
         SDL_UpdateTexture(sdl_image.texture, nullptr, pixels.data(), image.width * 3);
@@ -47,29 +55,31 @@ class camera {
     point pixel00_loc;    // Location of pixel 0, 0
     vec pixel_delta_u;  // Offset to pixel to the right
     vec pixel_delta_v;  // Offset to pixel below
+    vec u, v, w;     
 
     void initialize() {
         pixel_samples_scale = 1.0 / samples_per_pixel;
-        center = point(1, 0.5, 0.5); // x,y,z
-        // x + ---> w prawo, x - ---> w lewo
-        // y + ---> w góre, y - ---> w dół
-        // z + ---> do przodu, z - ---> do tyłu
+        center = lookfrom;
+        //center = point(1, 0.5, 0.5);
 
-        // Determine viewport dimensions.
-        auto focal_length = 1.0;
-        auto viewport_height = 2.0;
+        auto focal_length = (lookfrom - lookat).length();
+        auto theta = degrees_to_radians(vfov);
+        auto h = std::tan(theta/2);
+        auto viewport_height = 2 * h * focal_length;
         auto viewport_width = viewport_height * (double(image.width)/image.height);
 
-        // Calculate the vectors across the horizontal and down the vertical viewport edges.
-        auto viewport_u = vec(viewport_width, 0, 0);
-        auto viewport_v = vec(0, -viewport_height, 0);
+        w = unit_vector(lookfrom - lookat);
+        u = unit_vector(cross(vup, w));
+        v = cross(w, u);
 
-        // Calculate the horizontal and vertical delta vectors from pixel to pixel.
+        vec viewport_u = viewport_width * u; 
+        vec viewport_v = viewport_height * -v; 
+
         pixel_delta_u = viewport_u / image.width;
         pixel_delta_v = viewport_v / image.height;
 
-        // Calculate the location of the upper left pixel.
-        auto viewport_upper_left = center - vec(0, 0, focal_length) - viewport_u/2 - viewport_v/2;
+        //start point of the rendering
+        auto viewport_upper_left = center - (focal_length * w) - viewport_u/2 - viewport_v/2;
         pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
     }
 
