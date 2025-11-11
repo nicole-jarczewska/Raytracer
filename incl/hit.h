@@ -2,11 +2,15 @@
 #include "vec.h"
 #include "ray.h"
 #include "interval.h"
+#include "material.h"
+
+class material;
 
 class hit_record {
   public:
     point p;
     vec normal;
+    std::shared_ptr<material> mat;
     double t;
     bool front_face;
 
