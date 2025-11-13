@@ -46,15 +46,25 @@ int main() {
 
     hittable_list world;
 
-    world.add(std::make_shared<sphere>(point(1, 0,-1), 0.5)); // test square // where, size
+    auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
+    auto material_left   = std::make_shared<metal>(color(0.8, 0.8, 0.8));
+    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2));
+
+    //world.add(std::make_shared<sphere>(point(1, 0,-1), 0.5)); // test square // where, size
     //world.add(std::make_shared<cylinder>(point(0,0,-1.5), 0.1, 0.2, true));
     //world.add(std::make_shared<cone>(point(1, 0.4,-1), 0.4, 0.7, true));
     //world.add(std::make_shared<cone>(point(1, 2, -3), 1.0, 2.0, true));
-    world.add(std::make_shared<sphere>(point(0,-100.5,-1), 100)); //background
+    world.add(std::make_shared<sphere>(point(0,-100.5,-1), 100, material_ground)); //background
+
+    world.add(std::make_shared<sphere>(point( 0.0,    0.0, -1.2),   0.5, material_center));
+    world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.add(std::make_shared<sphere>(point( 1.0,    0.0, -1.0),   0.5, material_right));
 
     cam.render(world);
     handle_image(cam.sdl_image);
 
     return 0;
 }
+
 
