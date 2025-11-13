@@ -1,7 +1,8 @@
+#pragma once
 #include "vec.h"
 #include "ray.h"
 #include "objects.h"
-#pragma once
+#include "material.h"
 
 using color = vec;
 
@@ -11,8 +12,11 @@ color ray_color(const ray& r, int depth, const hittable& world) {
 
     hit_record rec;
     if (world.hit(r, interval(0.001, infinity), rec)) {
-        vec direction = rec.normal + random_on_hemisphere(rec.normal);
-        return 0.5 * ray_color(ray(rec.p, direction), depth-1, world);
+        ray scattered;
+            color attenuation;
+            if (rec.mat->scatter(r, rec, attenuation, scattered))
+                return attenuation * ray_color(scattered, depth-1, world);
+            return color(0,0,0);
     }
 
     vec unit_direction = unit_vector(r.direction());
