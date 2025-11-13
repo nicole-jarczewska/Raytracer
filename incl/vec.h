@@ -50,6 +50,11 @@ class vec {
     static vec random(double min, double max) {
         return vec(random_double(min,max), random_double(min,max), random_double(min,max));
     }
+
+    bool near_zero() const {
+        auto s = 1e-8;
+        return (std::fabs(elem[0]) < s) && (std::fabs(elem[1]) < s) && (std::fabs(elem[2]) < s);
+    }
 };
 
 using point = vec;
@@ -123,4 +128,8 @@ inline vec random_in_unit_disk() {
         if (p.length_squared() < 1)
             return p;
     }
+}
+
+inline vec reflect(const vec& v, const vec& n) {
+    return v - 2*dot(v,n)*n;
 }
