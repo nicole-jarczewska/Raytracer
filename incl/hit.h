@@ -2,7 +2,6 @@
 #include "vec.h"
 #include "ray.h"
 #include "interval.h"
-#include "material.h"
 
 class material;
 
