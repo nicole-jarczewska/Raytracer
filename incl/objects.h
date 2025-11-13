@@ -3,7 +3,7 @@
 
 class sphere : public hittable {
   public:
-    sphere(const point& center, double radius) : center(center), radius(std::fmax(0,radius)) {}
+    sphere(const point& center, double radius, std::shared_ptr<material> mat) : center(center), radius(std::fmax(0,radius)), mat(mat) {}
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         vec oc = center - r.origin();
