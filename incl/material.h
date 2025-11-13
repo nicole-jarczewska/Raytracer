@@ -8,7 +8,7 @@ class material {
   public:
     virtual ~material()=default;
 
-    virtual bool scratter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const{
+    virtual bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const{
       return false;
     }
 };
@@ -18,7 +18,7 @@ class lambertian : public material {
     lambertian(const color& albedo) : albedo(albedo) {}
 
     bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
-    const {
+    const override{
         auto scatter_direction = rec.normal + random_unit_vector();
 
         if (scatter_direction.near_zero())
@@ -38,7 +38,7 @@ class metal : public material {
     metal(const color& albedo) : albedo(albedo) {}
 
     bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
-    const {
+    const override{
         vec reflected = reflect(r_in.direction(), rec.normal);
         scattered = ray(rec.p, reflected);
         attenuation = albedo;
