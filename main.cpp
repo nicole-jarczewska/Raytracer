@@ -36,9 +36,9 @@ int main() {
     cam.samples_per_pixel = 25;
     cam.max_depth = 15;
 
-    cam.lookfrom = point(1,0,-2);
-    cam.lookat = point(1,0,-1);
-    cam.vup = vec(0,1,0);
+    cam.lookfrom = point( 0, 0, -2);
+    cam.lookat = point( 0, 0, -1);
+    cam.vup = vec( 0, 1, 0);
     cam.vfov = 100;
 
     cam.defocus_angle = 0.6;
@@ -48,7 +48,8 @@ int main() {
 
     auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
     auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
-    auto material_left   = std::make_shared<metal>(color(0.8, 0.8, 0.8));
+    auto material_left   = std::make_shared<dielectric>(1.5);
+    auto material_bubble = std::make_shared<dielectric>(1.00 / 1.50);
     auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2));
 
     //world.add(std::make_shared<sphere>(point(1, 0,-1), 0.5)); // test square // where, size
@@ -59,6 +60,7 @@ int main() {
 
     world.add(std::make_shared<sphere>(point( 0.0,    0.0, -1.2),   0.5, material_center));
     world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.4, material_bubble));
     world.add(std::make_shared<sphere>(point( 1.0,    0.0, -1.0),   0.5, material_right));
 
     cam.render(world);
@@ -66,5 +68,6 @@ int main() {
 
     return 0;
 }
+
 
 
