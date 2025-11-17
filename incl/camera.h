@@ -7,8 +7,9 @@ class camera {
   public:
     IMAGE image = {1000, 16.0 / 9.0}; //width, ratio
     //SDL_IMAGE sdl_image = initiate_image(image); //create sdl window
+    color background = color(0.70, 0.80, 1.00);
 
-    int samples_per_pixel = 100;
+    int samples_per_pixel = 50;
     int max_depth = 25;
 
     double vfov = 90; //vertical view angle
@@ -34,7 +35,7 @@ class camera {
                 color pixel_color(0,0,0);
                 for (int sample = 0; sample < samples_per_pixel; sample++) {
                     ray r = get_ray(i, j);
-                    pixel_color += ray_color(r, max_depth, world);
+                    pixel_color += ray_color(r, max_depth, world, background);
                 }
                 pixel_color *= pixel_samples_scale;
                 int index = (j * image.width + i) * 3;

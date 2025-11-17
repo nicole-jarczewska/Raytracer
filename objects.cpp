@@ -125,7 +125,8 @@ bool cylinder::intersect_cap(const ray& r, double y_offset, double t_min, double
 
     rec.t = t;
     rec.p = p;
-    vec outward_normal = vec(0, (y_offset == 0 ? -1 : 1), 0);
+    //vec outward_normal = vec(0, (y_offset == 0 ? -1 : 1), 0);
+    vec outward_normal = (y_offset == 0 ? vec(0,-1,0) : vec(0,1,0));
     rec.set_face_normal(r, outward_normal);
     get_cap_uv(p, rec.u, rec.v, y_offset == h);
     return true;

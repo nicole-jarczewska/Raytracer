@@ -31,6 +31,13 @@ class vec {
         return *this;
     }
 
+    vec& operator*=(const vec& v) {
+        elem[0] *= v.elem[0];
+        elem[1] *= v.elem[1];
+        elem[2] *= v.elem[2];
+        return *this;
+    }
+
     vec& operator/=(double t) {
         return *this *= 1/t;
     }
