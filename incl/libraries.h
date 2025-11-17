@@ -1,16 +1,3 @@
-#include <cmath>
-#include <vector>
-#include <memory>
-#include <limits>
-#include <algorithm>
-#include <cstdlib>
-#include <random>
-
-//sdl
-#define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "sdl_handler.h"
 
 //klasy etc.
 #include "camera.h"

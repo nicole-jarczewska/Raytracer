@@ -1,32 +1,18 @@
 #include <iostream>
-#include "incl/libraries.h"
-// using namespace std;
-#include "sdltamplate.h"
-
-
-// int main(){
-//     int width=800;
-//     int height=400;
-//     sdltemplate::sdl("Ray Tracer", width, height);
-//     sdltemplate::loop();
-//     for (int y=height-1;y>=0;y--){
-//         for(int x=0; x<width; x++){
-//             float r= float(x)/ float(width);
-//             float g= float(y)/ float(height);
-//             float b= 0.2;
-//             int ir=int(255.99*r);
-//             int ig=int(255.99*g);
-//             int ib=int(255.99*b);
-//             sdltemplate::setDrawColor(sdltemplate::createColor(ir, ig, ib, 255));
-//             sdltemplate::drawPoint(x, height-y);
-//         }
-//     }
-//     while(sdltemplate::running){
-//         sdltemplate::loop();
-//     }
-
-//     return 0;
-// }
+#include <cmath>
+#include <vector>
+#include <memory>
+#include <limits>
+#include <algorithm>
+#include <cstdlib>
+#include <random>
+#include <string>
+ // #include "incl/libraries.h"
+#include "objects.cpp"
+#include "floor.cpp"
+#include "incl/camera.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "incl/stb_image.h"
 
 int main() {
     camera cam;
@@ -36,35 +22,58 @@ int main() {
     cam.samples_per_pixel = 25;
     cam.max_depth = 15;
 
-    cam.lookfrom = point( 0, 0, -2);
-    cam.lookat = point( 0, 0, -1);
+    cam.lookfrom = point( -1, 2.5, -2.5);
+    cam.lookat = point( -1, 2.5, 0);
     cam.vup = vec( 0, 1, 0);
     cam.vfov = 100;
 
     cam.defocus_angle = 0.6;
-    cam.focus_dist = 1.5;
+    cam.focus_dist = 2;
 
     hittable_list world;
 
-    auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
-    auto material_left   = std::make_shared<dielectric>(1.5);
+    auto ocean = std::make_shared<image_texture>("ocean.png");
+    if (!ocean->is_valid()) {
+    std::cerr << "Failed to load texture!" << std::endl;
+    }
+    auto ocean_material = std::make_shared<lambertian>(ocean);
+
+    auto striped = std::make_shared<striped_texture>(0.32, color(.9, .3, .1), color(.9, .9, .9));
+    auto striped_material = std::make_shared<lambertian>(striped);
+
+    auto material_ground = std::make_shared<lambertian>(color(0.1, 0.3, 0.8));
+    auto material_center = std::make_shared<lambertian>(color(0.9, 0.3, 0.2));
+    auto rock = std::make_shared<lambertian>(color(0.9, 0.8, 0.9));
+    auto glass   = std::make_shared<dielectric>(1.5);
     auto material_bubble = std::make_shared<dielectric>(1.00 / 1.50);
-    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2));
+    auto material_right  = std::make_shared<metal>(color(0.9, 0.3, 0.2), 0.05);
 
-    //world.add(std::make_shared<sphere>(point(1, 0,-1), 0.5)); // test square // where, size
-    //world.add(std::make_shared<cylinder>(point(0,0,-1.5), 0.1, 0.2, true));
-    //world.add(std::make_shared<cone>(point(1, 0.4,-1), 0.4, 0.7, true));
-    //world.add(std::make_shared<cone>(point(1, 2, -3), 1.0, 2.0, true));
-    world.add(std::make_shared<sphere>(point(0,-100.5,-1), 100, material_ground)); //background
 
-    world.add(std::make_shared<sphere>(point( 0.0,    0.0, -1.2),   0.5, material_center));
-    world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.5, material_left));
-    world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.4, material_bubble));
-    world.add(std::make_shared<sphere>(point( 1.0,    0.0, -1.0),   0.5, material_right));
+    world.add(std::make_shared<cylinder>(point(0,-1,0), 30.0, 0.5, ocean_material)); //the ocean
 
-    cam.render(world);
-    handle_image(cam.sdl_image);
+    world.add(std::make_shared<rock_floor>(point(0, 0, 0), 5, 2, 10, 10, rock));// rocky floor
+
+    //main shape
+    world.add(std::make_shared<shape>(point(0, 0, 0), 0.6, 0.3, 2.5, striped_material, true));
+    world.add(std::make_shared<cylinder>(point(0, 2.5, 0), 0.3, 0.7, striped_material));
+    world.add(std::make_shared<cylinder>(point(0, 2.9, 0), 0.31, 0.3, glass, false));
+    world.add(std::make_shared<cone>(point(0, 3.5, 0), 0.43, 0.35 , material_center));
+
+    // //details
+    world.add(std::make_shared<sphere>(point( 0, 3.5, 0), 0.04, material_center));
+    world.add(std::make_shared<cylinder>(point(0, 2.5, 0), 0.5, 0.05, material_center));
+    world.add(std::make_shared<cone>(point(0, 3.7, 0), 0.01, 0.3 , material_center));
+
+    //world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.4, material_bubble));
+    //world.add(std::make_shared<sphere>(point( 1.0,    0.0, -1.0),   0.5, material_right));
+
+
+    IMAGE img(1000, 16.0 / 9.0);
+    std::vector<uint8_t> pixels(img.width * img.height * 3);
+    cam.render(world, pixels);
+    OutputMode mode = OutputMode::PPM_FILE;
+    output_image(mode, img, pixels, "render.ppm");
+    //handle_image(cam.sdl_image);
 
     return 0;
 }

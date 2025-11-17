@@ -1,4 +1,13 @@
 #pragma once
+#define SDL_MAIN_HANDLED
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <fstream>
+
+enum class OutputMode {
+    SDL_DISPLAY,
+    PPM_FILE
+};
 
 struct IMAGE{
     int width;
@@ -64,4 +73,31 @@ void handle_image(SDL_IMAGE sdl_image){
     SDL_DestroyRenderer(sdl_image.renderer);
     SDL_DestroyWindow(sdl_image.window);
     SDL_Quit();
+}
+
+
+void save_ppm(const std::string& filename, int width, int height, const std::vector<uint8_t>& pixels) {
+
+    std::ofstream file(filename);
+    file << "P3\n" << width << " " << height << "\n255\n";
+
+    for (int i = 0; i < width * height * 3; i += 3) {
+        file << int(pixels[i]) << " "
+             << int(pixels[i + 1]) << " "
+             << int(pixels[i + 2]) << "\n";
+    }
+
+    file.close();
+    std::cout << "Saved to " << filename << std::endl;
+}
+
+void output_image(
+    OutputMode mode,
+    IMAGE img,
+    const std::vector<uint8_t>& pixels,
+    const std::string& filename = "output.ppm"
+) {
+    if (mode == OutputMode::PPM_FILE) {
+        save_ppm(filename, img.width, img.height, pixels);
+    }
 }

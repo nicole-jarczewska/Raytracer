@@ -6,10 +6,10 @@
 class camera {
   public:
     IMAGE image = {1000, 16.0 / 9.0}; //width, ratio
-    SDL_IMAGE sdl_image = initiate_image(image); //create sdl window
+    //SDL_IMAGE sdl_image = initiate_image(image); //create sdl window
 
-    int samples_per_pixel = 10;
-    int max_depth = 10;
+    int samples_per_pixel = 50;
+    int max_depth =20;
 
     double vfov = 90; //vertical view angle
     point lookfrom = point(0,0,0);
@@ -25,9 +25,9 @@ class camera {
         return 0;
     }
 
-    void render(const hittable& world) {
+    void render(const hittable& world, std::vector<uint8_t>& pixels) {
         initialize();
-        std::vector<unsigned char> pixels(image.width * image.height * 3);
+        //std::vector<unsigned char> pixels(image.width * image.height * 3);
 
         for (int j = 0; j < image.height; j++) {
             for (int i = 0; i < image.width; i++) {
@@ -49,7 +49,7 @@ class camera {
                 pixels[index + 2] = static_cast<int>(256 * intensity.clamp(b));
             }
         }
-        SDL_UpdateTexture(sdl_image.texture, nullptr, pixels.data(), image.width * 3);
+        //SDL_UpdateTexture(sdl_image.texture, nullptr, pixels.data(), image.width * 3);
     }
 
   private:
