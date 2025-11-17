@@ -70,7 +70,7 @@ public:
              std::shared_ptr<material> mat,
              bool capped);
 
-    virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
 
 private:
     point cen;
@@ -84,18 +84,54 @@ private:
                        double t_min, double t_max, hit_record& rec) const;
 };
 
-struct tri_vertex {
+struct vertex {
     point p;
     vec normal;
+    double u, v;
 };
 
+// Triangle face with per-vertex UVs
 struct tri_face {
-    tri_vertex v0, v1, v2;
+    vertex v0, v1, v2;
     std::shared_ptr<material> mat;
 
-    bool hit(const ray& r, interval ray_t, hit_record& rec) const;
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const {
+        const double EPS = 1e-8;
+        vec edge1 = v1.p - v0.p;
+        vec edge2 = v2.p - v0.p;
+        vec h = cross(r.direction(), edge2);
+        double a = dot(edge1, h);
+        if (std::abs(a) < EPS) return false;
+
+        double f = 1.0 / a;
+        vec s = r.origin() - v0.p;
+        double u = f * dot(s, h);
+        if (u < 0.0 || u > 1.0) return false;
+
+        vec q = cross(s, edge1);
+        double v = f * dot(r.direction(), q);
+        if (v < 0.0 || u + v > 1.0) return false;
+
+        double t = f * dot(edge2, q);
+        if (t < ray_t.min || t > ray_t.max) return false;
+
+        rec.t = t;
+        rec.p = r.at(t);
+
+        vec n = cross(edge1, edge2);
+        rec.set_face_normal(r, unit_vector(n));
+        rec.mat = mat;
+
+        // Interpolate UVs at hit point
+        double w = 1.0 - u - v;
+        rec.u = w * v0.u + u * v1.u + v * v2.u;
+        rec.v = w * v0.v + u * v1.v + v * v2.v;
+
+        return true;
+    }
 };
 
+// Rock floor class
 class rock_floor : public hittable {
 public:
     rock_floor(const point& center,
@@ -103,9 +139,10 @@ public:
                double size_z,
                int grid_res_x,
                int grid_res_z,
-               std::shared_ptr<material> mat);
+               std::shared_ptr<material> mat,
+               double texture_repeat = 1.0);
 
-    virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
 
 private:
     std::vector<tri_face> faces;

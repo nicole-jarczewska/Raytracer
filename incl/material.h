@@ -77,9 +77,9 @@ class dielectric : public material {
             direction = refract(unit_direction, rec.normal, ri);
 
         scattered = ray(rec.p, direction);
-        vec refracted = refract(unit_direction, rec.normal, ri);
+        // vec refracted = refract(unit_direction, rec.normal, ri);
 
-        scattered = ray(rec.p, refracted);
+        // scattered = ray(rec.p, refracted);
         return true;
     }
 

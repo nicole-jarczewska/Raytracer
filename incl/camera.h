@@ -8,8 +8,8 @@ class camera {
     IMAGE image = {1000, 16.0 / 9.0}; //width, ratio
     //SDL_IMAGE sdl_image = initiate_image(image); //create sdl window
 
-    int samples_per_pixel = 50;
-    int max_depth =20;
+    int samples_per_pixel = 100;
+    int max_depth = 25;
 
     double vfov = 90; //vertical view angle
     point lookfrom = point(0,0,0);
