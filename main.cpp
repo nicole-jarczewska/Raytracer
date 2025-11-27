@@ -55,10 +55,11 @@ int main() {
     auto material_center = std::make_shared<lambertian>(color(0.9, 0.3, 0.2));
     auto red = std::make_shared<lambertian>(color(1, 0.1, 0.1));
     //auto rock = std::make_shared<lambertian>(color(0.3, 0.3, 0.3));
-    //auto glass   = std::make_shared<dielectric>(1.3);
+    auto glass1 = std::make_shared<dielectric>(1.5);
     auto blue_glass = std::make_shared<glass>(1.5, color(0.6, 0.6, 0.7));
     auto material_bubble = std::make_shared<dielectric>(1.00 / 1.50);
-    auto material_right  = std::make_shared<metal>(color(0.9, 0.3, 0.2), 0.05);
+    auto metal_material  = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.01);
+  
 
 
     ////the scene
@@ -101,6 +102,11 @@ int main() {
 
     //world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.4, material_bubble));
     //world.add(std::make_shared<sphere>(point( 1.0,    0.0, -1.0),   0.5, material_right));
+    
+    
+    world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.5, material_bubble));
+    world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.7, glass1));
+    world.add(std::make_shared<sphere>(point(-3.0, 2.0, -1.0),   0.9, metal_material));
 
     world.add(std::make_shared<sphere>(point(start_point_x, 2.95 ,start_point_z), 0.07, light));
     world.add(std::make_shared<sphere>(point(-10, 10, 20), 2, sunlight));
