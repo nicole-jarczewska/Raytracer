@@ -54,9 +54,14 @@ int main() {
     auto material_ground = std::make_shared<lambertian>(color(0.1, 0.3, 0.8));
     auto material_center = std::make_shared<lambertian>(color(0.9, 0.3, 0.2));
     auto red = std::make_shared<lambertian>(color(1, 0.1, 0.1));
+    
+    //lanter
+    auto mat_red = std::make_shared<metal>(color(0.9, 0.1, 0.1), 0.1);
+    auto mat_white = std::make_shared<metal>(color(1, 1, 1), 0.1);
+    
     //auto rock = std::make_shared<lambertian>(color(0.3, 0.3, 0.3));
     auto glass1 = std::make_shared<dielectric>(1.5);
-    auto blue_glass = std::make_shared<glass>(1.5, color(0.6, 0.6, 0.7));
+    auto blue_glass = std::make_shared<glass>(1.5, color(0.8, 0.85, 1));
     auto material_bubble = std::make_shared<dielectric>(1.00 / 1.50);
     auto metal_material  = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.01);
   
@@ -70,35 +75,46 @@ int main() {
     float start_point_x = 0.0;
     float start_point_z = 0.0;
     //main shape
-    world.add(std::make_shared<shape>(point(start_point_x, 0, start_point_z), 0.6, 0.3, 2.5, striped_material, true)); // base
-    world.add(std::make_shared<cylinder>(point(start_point_x, 2.5, start_point_z), 0.3, 0.4, red, false)); // base
-    world.add(std::make_shared<cylinder>(point(start_point_x, 3.1, start_point_z), 0.3, 0.05, red, false)); // base
-    world.add(std::make_shared<cylinder>(point(start_point_x, 2.9, start_point_z), 0.29, 0.2, blue_glass, true)); // window
+    //world.add(std::make_shared<shape>(point(start_point_x, 0, start_point_z), 0.6, 0.3, 2.5, striped_material, true)); // base
+    
+    world.add(std::make_shared<shape>(point(start_point_x, -0.15, start_point_z), 0.56, 0.53, 0.3, mat_white, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 0.15, start_point_z), 0.53, 0.5, 0.3, mat_red, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 0.45, start_point_z), 0.5, 0.47, 0.3, mat_white, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 0.75, start_point_z), 0.47, 0.44, 0.3, mat_red, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 1.05, start_point_z), 0.44, 0.41, 0.3, mat_white, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 1.35, start_point_z), 0.41, 0.39, 0.3, mat_red, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 1.65, start_point_z), 0.39, 0.36, 0.3, mat_white, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 1.95, start_point_z), 0.36, 0.33, 0.3, mat_red, true));
+    world.add(std::make_shared<shape>(point(start_point_x, 2.25, start_point_z), 0.33, 0.3, 0.3, mat_white, true));
+    
+    world.add(std::make_shared<cylinder>(point(start_point_x, 2.5, start_point_z), 0.3, 0.4, mat_red, false)); // base
+    world.add(std::make_shared<cylinder>(point(start_point_x, 3.1, start_point_z), 0.3, 0.05, mat_red, false)); // base
+    world.add(std::make_shared<cylinder>(point(start_point_x, 2.9, start_point_z), 0.29, 0.2, blue_glass , true)); // window
     //world.add(std::make_shared<cone>(point(0, 3.5, 0), 0.43, 0.35 , red)); // roof
-    world.add(std::make_shared<shape>(point(start_point_x, 3.15, start_point_z), 0.43, 0.0, 0.35 , red, true)); // roof
+    world.add(std::make_shared<shape>(point(start_point_x, 3.15, start_point_z), 0.43, 0.0, 0.35 , mat_red, true)); // roof
 
 
     // //details
-    world.add(std::make_shared<sphere>(point(start_point_x, 3.5, start_point_z), 0.04, red)); // sphere on top
-    world.add(std::make_shared<cylinder>(point(start_point_x, 2.55, start_point_z), 0.52, 0.05, red)); // balcony
-    world.add(std::make_shared<shape>(point(start_point_x, 3.5, start_point_z), 0.01, 0.0, 0.3, red, true)); // point on top
-    world.add(std::make_shared<cylinder>(point(start_point_x + 0.29, 2.9, start_point_z), 0.01, 0.2, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x - 0.29, 2.9, start_point_z), 0.01, 0.2, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x, 2.9, start_point_z + 0.29), 0.01, 0.2, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x, 2.9, start_point_z - 0.29), 0.01, 0.2, red));
+    world.add(std::make_shared<sphere>(point(start_point_x, 3.5, start_point_z), 0.04, mat_red)); // sphere on top
+    world.add(std::make_shared<cylinder>(point(start_point_x, 2.55, start_point_z), 0.52, 0.05, mat_red)); // balcony
+    world.add(std::make_shared<shape>(point(start_point_x, 3.5, start_point_z), 0.01, 0.0, 0.3, mat_red, true)); // point on top
+    world.add(std::make_shared<cylinder>(point(start_point_x + 0.29, 2.9, start_point_z), 0.01, 0.2, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x - 0.29, 2.9, start_point_z), 0.01, 0.2, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x, 2.9, start_point_z + 0.29), 0.01, 0.2, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x, 2.9, start_point_z - 0.29), 0.01, 0.2, mat_red));
 
     // railings
     float railing_h = 2.55;
-    world.add(std::make_shared<cylinder>(point(start_point_x, 2.70, start_point_z), 0.5, 0.02, red, false));
-    world.add(std::make_shared<cylinder>(point(start_point_x, 2.83, start_point_z), 0.5, 0.02, red, false));
-    world.add(std::make_shared<cylinder>(point(start_point_x + 0.5, railing_h, start_point_z), 0.015, 0.3, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x - 0.5, railing_h, start_point_z), 0.015, 0.3, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x, railing_h, start_point_z + 0.5), 0.015, 0.3, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x, railing_h, start_point_z - 0.5), 0.015, 0.3, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x + 0.35, railing_h, start_point_z + 0.35), 0.015, 0.3, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x + 0.35, railing_h, start_point_z - 0.35), 0.015, 0.3, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x - 0.35, railing_h, start_point_z + 0.35), 0.015, 0.3, red));
-    world.add(std::make_shared<cylinder>(point(start_point_x - 0.35, railing_h, start_point_z - 0.35), 0.015, 0.3, red));
+    world.add(std::make_shared<cylinder>(point(start_point_x, 2.70, start_point_z), 0.5, 0.02, mat_red, false));
+    world.add(std::make_shared<cylinder>(point(start_point_x, 2.83, start_point_z), 0.5, 0.02, mat_red, false));
+    world.add(std::make_shared<cylinder>(point(start_point_x + 0.5, railing_h, start_point_z), 0.015, 0.3, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x - 0.5, railing_h, start_point_z), 0.015, 0.3, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x, railing_h, start_point_z + 0.5), 0.015, 0.3, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x, railing_h, start_point_z - 0.5), 0.015, 0.3, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x + 0.35, railing_h, start_point_z + 0.35), 0.015, 0.3, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x + 0.35, railing_h, start_point_z - 0.35), 0.015, 0.3, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x - 0.35, railing_h, start_point_z + 0.35), 0.015, 0.3, mat_red));
+    world.add(std::make_shared<cylinder>(point(start_point_x - 0.35, railing_h, start_point_z - 0.35), 0.015, 0.3, mat_red));
 
     //world.add(std::make_shared<sphere>(point(-1.0,    0.0, -1.0),   0.4, material_bubble));
     //world.add(std::make_shared<sphere>(point( 1.0,    0.0, -1.0),   0.5, material_right));
@@ -116,7 +132,7 @@ int main() {
     std::vector<uint8_t> pixels(img.width * img.height * 3);
     cam.render(world, pixels);
     OutputMode mode = OutputMode::PPM_FILE;
-    output_image(mode, img, pixels, "render.ppm");
+    output_image(mode, img, pixels, "metal.ppm");
     //handle_image(cam.sdl_image);
 
     return 0;
