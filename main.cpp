@@ -65,7 +65,8 @@ int main() {
     auto material_bubble = std::make_shared<dielectric>(1.00 / 1.50);
     auto metal_material  = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.01);
   
-
+    //sqr
+    world.add(std::make_shared<rectangle>(point(-3,1,0), 2, 3, mat_red));
 
     ////the scene
 
@@ -122,7 +123,7 @@ int main() {
     
     world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.5, material_bubble));
     world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.7, glass1));
-    world.add(std::make_shared<sphere>(point(-3.0, 2.0, -1.0),   0.9, metal_material));
+    //world.add(std::make_shared<sphere>(point(-3.0, 2.0, -1.0),   0.9, metal_material));
 
     world.add(std::make_shared<sphere>(point(start_point_x, 2.95 ,start_point_z), 0.07, light));
     world.add(std::make_shared<sphere>(point(-10, 10, 20), 2, sunlight));

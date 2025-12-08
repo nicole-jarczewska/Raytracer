@@ -380,3 +380,39 @@ bool shape::hit(const ray& r, interval ray_t, hit_record& rec) const {
 
     return hit_anything;
 }
+
+rectangle::rectangle(const point& center, double a, double b, std::shared_ptr<material>mat)
+         :  cen(center), b(b), a(a), mat(mat) {}
+
+bool rectangle::hit(const ray& r, interval ray_t, hit_record& rec) const {
+
+    double x0 =  cen.x() - (a/2);
+    double x1 =  cen.x() + (a/2);
+
+    double y0 =  cen.y() - (b/2);
+    double y1 =  cen.y() + (b/2);
+
+    double k = cen.z();
+
+    double t = (k - r.origin().z()) / r.direction().z();
+        if (t < ray_t.min || t > ray_t.max) return false;
+
+        double x = r.origin().x() + t * r.direction().x();
+        double y = r.origin().y() + t * r.direction().y();
+
+        if (x < x0 || x > x1 || y < y0 || y > y1)
+            return false;
+
+        rec.t = t;
+        rec.p = r.at(t);
+        rec.mat = mat;
+
+        vec normal(0, 0, 1);          // normal ściany
+        rec.set_face_normal(r, normal);
+
+        rec.u = (x - x0) / (x1 - x0);
+        rec.v = (y - y0) / (y1 - y0);
+
+        return true;
+}
+

@@ -147,3 +147,16 @@ public:
 private:
     std::vector<tri_face> faces;
 };
+
+class rectangle : public hittable {
+public:
+    rectangle(const point& center, double a, double b, std::shared_ptr<material> mat);
+    
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+    
+private:
+    point cen;
+    double a;
+    double b;
+    std::shared_ptr<material> mat;
+};
