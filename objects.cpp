@@ -426,21 +426,12 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const {
     double x = r.origin().x() + t * r.direction().x();
     double y = r.origin().y() + t * r.direction().y();
 
-    double yg1 = C.y();
-    double yg2 = A.y();
-    double xg1 = A.x();
-    double xg2 = B.x();
-
-    //if (x < xg1 || x > xg2 || y < yg1 || y > yg2) return false;
-
     double xA = A.x(); double yA = A.y();       // A
     double xB = B.x(); double yB = B.y();       // B
     double xC = C.x(); double yC = C.y();        // C
 
-    // wyznacznik (pole zorientowane)
     double den = (yB - yC) * (xA - xC) + (xC - xB) * (yA - yC);
 
-    // jeśli den = 0 -> punkty A,B,C współliniowe (trójkąt nie istnieje)
     if (den == 0.0)
         return false;
 
@@ -448,7 +439,6 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const {
     double lambdaB = ((yC - yA) * (x - xC) + (xA - xC) * (y - yC)) / den;
     double lambdaC = 1.0 - lambdaA - lambdaB;
 
-    // punkt jest w środku lub na krawędzi, jeśli wszystkie >= 0
     if (lambdaA >= 0.0 && lambdaB >= 0.0 && lambdaC >= 0.0){
         rec.t = t;
         rec.p = r.at(t);
