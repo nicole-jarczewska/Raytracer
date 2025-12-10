@@ -395,24 +395,77 @@ bool rectangle::hit(const ray& r, interval ray_t, hit_record& rec) const {
     double k = cen.z();
 
     double t = (k - r.origin().z()) / r.direction().z();
-        if (t < ray_t.min || t > ray_t.max) return false;
+    if (t < ray_t.min || t > ray_t.max) return false;
 
-        double x = r.origin().x() + t * r.direction().x();
-        double y = r.origin().y() + t * r.direction().y();
+    double x = r.origin().x() + t * r.direction().x();
+    double y = r.origin().y() + t * r.direction().y();
 
-        if (x < x0 || x > x1 || y < y0 || y > y1)
-            return false;
+    if (x < x0 || x > x1 || y < y0 || y > y1) return false;
 
+    rec.t = t;
+    rec.p = r.at(t);
+    rec.mat = mat;
+
+    vec normal(0, 0, 1);
+    rec.set_face_normal(r, normal);
+
+    rec.u = (x - x0) / (x1 - x0);
+    rec.v = (y - y0) / (y1 - y0);
+
+    return true;
+}
+
+triangle::triangle(const point& center, double size, std::shared_ptr<material>mat)
+         :  cen(center), s(size), mat(mat) {}
+
+bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const {
+    
+    double t = (cen.z() - r.origin().z()) / r.direction().z();
+    if (t < ray_t.min || t > ray_t.max) return false;
+
+    double x = r.origin().x() + t * r.direction().x();
+    double y = r.origin().y() + t * r.direction().y();
+
+    double yg1 = C.y();
+    double yg2 = A.y();
+    double xg1 = A.x();
+    double xg2 = B.x();
+
+    //if (x < xg1 || x > xg2 || y < yg1 || y > yg2) return false;
+
+    double xA = A.x(); double yA = A.y();       // A
+    double xB = B.x(); double yB = B.y();       // B
+    double xC = C.x(); double yC = C.y();        // C
+
+    // wyznacznik (pole zorientowane)
+    double den = (yB - yC) * (xA - xC) + (xC - xB) * (yA - yC);
+
+    // jeśli den = 0 -> punkty A,B,C współliniowe (trójkąt nie istnieje)
+    if (den == 0.0)
+        return false;
+
+    double lambdaA = ((yB - yC) * (x - xC) + (xC - xB) * (y - yC)) / den;
+    double lambdaB = ((yC - yA) * (x - xC) + (xA - xC) * (y - yC)) / den;
+    double lambdaC = 1.0 - lambdaA - lambdaB;
+
+    // punkt jest w środku lub na krawędzi, jeśli wszystkie >= 0
+    if (lambdaA >= 0.0 && lambdaB >= 0.0 && lambdaC >= 0.0){
         rec.t = t;
         rec.p = r.at(t);
         rec.mat = mat;
 
-        vec normal(0, 0, 1);          // normal ściany
+        vec normal(0, 0, 1);
         rec.set_face_normal(r, normal);
-
-        rec.u = (x - x0) / (x1 - x0);
-        rec.v = (y - y0) / (y1 - y0);
-
         return true;
-}
+    }
 
+    return false;
+
+    rec.t = t;
+    rec.p = r.at(t);
+    rec.mat = mat;
+
+    vec normal(0, 0, 1);
+    rec.set_face_normal(r, normal);
+    return true;
+}

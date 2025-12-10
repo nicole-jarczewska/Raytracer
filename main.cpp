@@ -66,7 +66,7 @@ int main() {
     auto metal_material  = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.01);
   
     //sqr
-    world.add(std::make_shared<rectangle>(point(-3,1,0), 2, 3, mat_red));
+    world.add(std::make_shared<triangle>(point(-3,1,0), 2, mat_red));
 
     ////the scene
 
@@ -133,7 +133,7 @@ int main() {
     std::vector<uint8_t> pixels(img.width * img.height * 3);
     cam.render(world, pixels);
     OutputMode mode = OutputMode::PPM_FILE;
-    output_image(mode, img, pixels, "metal.ppm");
+    output_image(mode, img, pixels, "triangle.ppm");
     //handle_image(cam.sdl_image);
 
     return 0;

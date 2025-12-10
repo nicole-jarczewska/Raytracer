@@ -160,3 +160,27 @@ private:
     double b;
     std::shared_ptr<material> mat;
 };
+
+class triangle : public hittable {
+public:
+    triangle(const point& center, double size, std::shared_ptr<material> mat);
+
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+private:
+    point cen;
+    double it;
+    double s;
+    std::shared_ptr<material> mat;
+    
+    double h_1 = s / 3;
+    double h_2 = h_1 * 2;
+    double half = sqrt((h_2 * h_2) - (h_1 * h_1));
+
+    const point A = point(cen.x() - half, cen.y() + h_1, cen.z());
+    const point B = point(cen.x() + half, cen.y() + h_1, cen.z());
+    const point C = point(cen.x(), cen.y() - h_2, cen.z());
+};
+
+
+
+
