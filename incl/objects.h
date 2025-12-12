@@ -166,21 +166,35 @@ public:
     triangle(const point& center, double size, std::shared_ptr<material> mat);
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+
+    const point A = point(cen.x() - half, cen.y() + h_1, cen.z());
+    const point B = point(cen.x() + half, cen.y() + h_1, cen.z());
+    const point C = point(cen.x(), cen.y() - h_2, cen.z());
 private:
     point cen;
-    double it;
     double s;
     std::shared_ptr<material> mat;
     
     double h_1 = s / 3;
     double h_2 = h_1 * 2;
     double half = sqrt((h_2 * h_2) - (h_1 * h_1));
-
-    const point A = point(cen.x() - half, cen.y() + h_1, cen.z());
-    const point B = point(cen.x() + half, cen.y() + h_1, cen.z());
-    const point C = point(cen.x(), cen.y() - h_2, cen.z());
 };
 
+class snowflake : public hittable {
+public:
+    snowflake(const point& center, double size, int iteration, std::shared_ptr<material> mat);
 
+    std::vector<triangle> gener() const;
 
+    point halfway(point Q, point W) const;
 
+    std::pair<point, double> where_to_place(point Q, point W) const;
+
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+
+private:
+    point cen;
+    double s;
+    int it;
+    std::shared_ptr<material> mat;
+};

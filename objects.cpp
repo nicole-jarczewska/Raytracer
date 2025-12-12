@@ -459,3 +459,68 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const {
     rec.set_face_normal(r, normal);
     return true;
 }
+
+snowflake::snowflake(const point& center, double size, int iteration, std::shared_ptr<material>mat)
+         :  cen(center), s(size), it(iteration), mat(mat) {}
+
+std::vector<triangle> snowflake::gener() const {
+
+    std::vector<triangle> triangles;
+
+    triangles.emplace_back(cen, s, mat);
+
+    if ( it == 1 ) return triangles;
+
+    triangle primo = triangles[0];
+
+    std::pair<point, double> AB = where_to_place(primo.A, primo.B);
+    std::pair<point, double> AC = where_to_place(primo.A, primo.C);
+    std::pair<point, double> CB = where_to_place(primo.C, primo.B);
+
+    triangles.emplace_back(AB.first, AB.second, mat);
+    triangles.emplace_back(AC.first, AC.second, mat);
+    triangles.emplace_back(CB.first, CB.second, mat);
+    
+    return triangles;
+}
+
+point snowflake::halfway( point Q, point W ) const {
+
+    point E = point( (Q.x() - W.x()) / 2, (Q.y() - W.y()) / 2, Q.z() ) ;
+
+    return E;
+}
+
+std::pair<point, double> snowflake::where_to_place( point Q, point W ) const {
+
+    point N;
+    point half_p = halfway(Q, W);
+    double QW = sqrt( (W.x() - Q.x() ) * ( W.x() - Q.x() ) + ( W.y() - Q.y() ) * ( W.y() - Q.y() ));
+    double qw = QW / 3.0;
+    double h_t = sqrt(3) * qw / 2;
+
+    if ( Q.x() == W.x() ) {
+        N = point( half_p.x(), half_p.y() + h_t, Q.z() );
+        return std::make_pair(N, qw);
+    }
+
+    double coeff_a = ( W.y() - Q.y() ) / ( W.x() - Q.x() );
+
+    if ( coeff_a > 0 ) {
+       N = point( half_p.x() + ( sqrt(3) * h_t / 2 ), half_p.y() - ( h_t / 2 ), Q.z() );
+       return std::make_pair(N, qw);
+    }
+
+    N = point( half_p.x() - ( sqrt(3) * h_t / 2 ), half_p.y() - ( h_t / 2 ), Q.z() );
+    return std::make_pair(N, qw);        
+}
+
+bool snowflake::hit(const ray& r, interval ray_t, hit_record& rec) const {
+
+    std::vector<triangle> fig = gener();
+
+    for (const triangle& triang : fig){
+        if (triang.hit(r, ray_t, rec) ) return true;
+    }
+    return false;
+}
