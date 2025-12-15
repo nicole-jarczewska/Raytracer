@@ -163,18 +163,20 @@ private:
 
 class triangle : public hittable {
 public:
-    triangle(const point& center, double size, std::shared_ptr<material> mat);
+    triangle(const point& center, double size, std::shared_ptr<material> mat, bool up);
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
 
-    const point A = point(cen.x() - half, cen.y() + h_1, cen.z());
-    const point B = point(cen.x() + half, cen.y() + h_1, cen.z());
-    const point C = point(cen.x(), cen.y() - h_2, cen.z());
+    std::tuple<point, point, point> tri_points;
+
 private:
     point cen;
     double s;
     std::shared_ptr<material> mat;
-    
+    bool up;
+
+    std::tuple<point, point, point> is_up(bool upi) const;
+
     double h_1 = s / 3;
     double h_2 = h_1 * 2;
     double half = sqrt((h_2 * h_2) - (h_1 * h_1));
@@ -197,4 +199,5 @@ private:
     double s;
     int it;
     std::shared_ptr<material> mat;
+    std::vector<triangle>  fig = gener();
 };

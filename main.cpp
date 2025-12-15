@@ -133,7 +133,7 @@ int main() {
     std::vector<uint8_t> pixels(img.width * img.height * 3);
     cam.render(world, pixels);
     OutputMode mode = OutputMode::PPM_FILE;
-    output_image(mode, img, pixels, "snowflake_test.ppm");
+    output_image(mode, img, pixels, "snowflake_wip.ppm");
     //handle_image(cam.sdl_image);
 
     return 0;
