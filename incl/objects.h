@@ -190,7 +190,8 @@ public:
 
     point halfway(point Q, point W) const;
 
-    std::pair<point, double> where_to_place(point Q, point W) const;
+    std::pair<point, double> where_to_place_down(point Q, point W) const;
+    std::pair<point, double> where_to_place_up(point Q, point W) const;
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
 

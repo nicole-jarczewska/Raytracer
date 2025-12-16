@@ -504,16 +504,86 @@ std::vector<triangle> snowflake::gener() const {
     triangle primo = triangles[0];
     std::tuple<point, point, point> ed_points = primo.tri_points;
 
-    point haf = halfway(std::get<0>(ed_points), std::get<1>(ed_points));
+    point A_b = std::get<0>(ed_points);
+    point B_b = std::get<1>(ed_points);
+    point C_b = std::get<2>(ed_points);
 
-    std::pair<point, double> AB = where_to_place(std::get<0>(ed_points), std::get<1>(ed_points));
-    std::pair<point, double> AC = where_to_place(std::get<0>(ed_points), std::get<2>(ed_points));
-    std::pair<point, double> CB = where_to_place(std::get<2>(ed_points), std::get<1>(ed_points));
+    std::pair<point, double> AB = where_to_place_down(A_b, B_b);
+    std::pair<point, double> AC = where_to_place_down(A_b, C_b);
+    std::pair<point, double> CB = where_to_place_down(C_b, B_b);
 
     triangles.emplace_back(AB.first, AB.second, mat, true);
     triangles.emplace_back(AC.first, AC.second, mat, true);
     triangles.emplace_back(CB.first, CB.second, mat, true);
-    
+
+    if (it == 2 ) return triangles;
+   
+    for (int i = 0; i <= 3 ; i++ ){
+        if (i == 0){
+            for ( int j = 1; j <=3; j++){
+                std::tuple<point, point, point> ABC = triangles[j].tri_points;
+
+                point A_s = std::get<0>(ABC);
+                point B_s = std::get<1>(ABC);
+                point C_s = std::get<2>(ABC);
+
+                if (j == 1){
+
+                    std::pair<point, double> third1 = where_to_place_down(A_b, B_s);
+                    triangles.emplace_back(third1.first, third1.second, mat, true);
+
+                    std::pair<point, double> third2 = where_to_place_down(C_s, B_b);
+                    triangles.emplace_back(third2.first, third2.second, mat, true);
+                   
+                }
+
+                if (j == 2){
+
+                    std::pair<point, double> third1 = where_to_place_down(A_b, A_s);
+                    triangles.emplace_back(third1.first, third1.second, mat, true);
+
+                    std::pair<point, double> third2 = where_to_place_down(C_s, C_b);
+                    triangles.emplace_back(third2.first, third2.second, mat, true);
+                   
+                }
+ 
+                if (j == 3){
+
+                    std::pair<point, double> third1 = where_to_place_down(C_b, B_s);
+                    triangles.emplace_back(third1.first, third1.second, mat, true);
+
+                    std::pair<point, double> third2 = where_to_place_down(A_s, B_b);
+                    triangles.emplace_back(third2.first, third2.second, mat, true);
+                   
+                }
+ 
+            }
+        }
+        if (i > 0){
+            std::tuple<point, point, point> ABC = triangles[i].tri_points;
+
+            if ( i != 1 ){
+
+                std::pair<point, double> CB_n = where_to_place_up(std::get<2>(ABC), std::get<1>(ABC));
+                triangles.emplace_back(CB_n.first, CB_n.second, mat, false);
+
+            }
+
+            if ( i != 2 ){
+
+                std::pair<point, double> AC_n = where_to_place_up(std::get<0>(ABC), std::get<2>(ABC));
+                triangles.emplace_back(AC_n.first, AC_n.second, mat, false);
+
+            }
+
+            if ( i != 3 ){
+
+                std::pair<point, double> AB_n = where_to_place_up(std::get<0>(ABC), std::get<1>(ABC));
+                triangles.emplace_back(AB_n.first, AB_n.second, mat, false);
+
+            }
+        }
+    }
     return triangles;
 }
 
@@ -524,7 +594,7 @@ point snowflake::halfway( point Q, point W ) const {
     return E;
 }
 
-std::pair<point, double> snowflake::where_to_place( point Q, point W ) const {
+std::pair<point, double> snowflake::where_to_place_down( point Q, point W ) const {
 
     point N;
     point half_p = halfway(Q, W);
@@ -555,4 +625,29 @@ bool snowflake::hit(const ray& r, interval ray_t, hit_record& rec) const {
         if (triang.hit(r, ray_t, rec) ) return true;
     }
     return false;
+}
+
+std::pair<point, double> snowflake::where_to_place_up( point Q, point W ) const {
+
+    point N;
+    point half_p = halfway(Q, W);
+    double QW = sqrt( (W.x() - Q.x() ) * ( W.x() - Q.x() ) + ( W.y() - Q.y() ) * ( W.y() - Q.y() ));
+    double qw = QW / 3.0;
+    double h_t = sqrt(3) * qw / 2;
+    double h_t1 = h_t / 3;
+
+    if ( Q.y() == W.y() ) {
+        N = point( half_p.x(), Q.y() - h_t1, Q.z() );
+        return std::make_pair(N, h_t);
+    }
+
+    double coeff_a = ( W.y() - Q.y() ) / ( W.x() - Q.x() );
+
+    if ( coeff_a > 0 ) {
+       N = point( half_p.x() - ( sqrt(3) * h_t1 / 2 ), half_p.y() + ( h_t1 / 2 ), Q.z() );
+       return std::make_pair(N, h_t);
+    }
+
+    N = point( half_p.x() + ( sqrt(3) * h_t1 / 2 ), half_p.y() + ( h_t1 / 2 ), Q.z() );
+    return std::make_pair(N, h_t);        
 }

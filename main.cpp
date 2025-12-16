@@ -65,8 +65,8 @@ int main() {
     auto material_bubble = std::make_shared<dielectric>(1.00 / 1.50);
     auto metal_material  = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.01);
   
-    //sqr
-    world.add(std::make_shared<snowflake>(point(-3,1,0), 2, 2, mat_red));
+    //snowflake
+    world.add(std::make_shared<snowflake>(point(-3,1.5,0), 2, 3, mat_red));
 
     ////the scene
 
