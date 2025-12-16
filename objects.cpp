@@ -505,15 +505,10 @@ std::vector<triangle> snowflake::gener() const {
     std::tuple<point, point, point> ed_points = primo.tri_points;
 
     point haf = halfway(std::get<0>(ed_points), std::get<1>(ed_points));
-    std::cout << "half_p: "<< haf << std::endl;
 
     std::pair<point, double> AB = where_to_place(std::get<0>(ed_points), std::get<1>(ed_points));
     std::pair<point, double> AC = where_to_place(std::get<0>(ed_points), std::get<2>(ed_points));
     std::pair<point, double> CB = where_to_place(std::get<2>(ed_points), std::get<1>(ed_points));
-
-    std::cout<< "AB: " << AB.first << std::endl;
-    std::cout<< "AC: " << AC.first << std::endl;
-    std::cout<< "CB: " << CB.first << std::endl;
 
     triangles.emplace_back(AB.first, AB.second, mat, true);
     triangles.emplace_back(AC.first, AC.second, mat, true);
@@ -540,18 +535,18 @@ std::pair<point, double> snowflake::where_to_place( point Q, point W ) const {
 
     if ( Q.y() == W.y() ) {
         N = point( half_p.x(), Q.y() + h_t1, Q.z() );
-        return std::make_pair(N, qw);
+        return std::make_pair(N, h_t);
     }
 
     double coeff_a = ( W.y() - Q.y() ) / ( W.x() - Q.x() );
 
     if ( coeff_a > 0 ) {
        N = point( half_p.x() + ( sqrt(3) * h_t1 / 2 ), half_p.y() - ( h_t1 / 2 ), Q.z() );
-       return std::make_pair(N, qw);
+       return std::make_pair(N, h_t);
     }
 
     N = point( half_p.x() - ( sqrt(3) * h_t1 / 2 ), half_p.y() - ( h_t1 / 2 ), Q.z() );
-    return std::make_pair(N, qw);        
+    return std::make_pair(N, h_t);        
 }
 
 bool snowflake::hit(const ray& r, interval ray_t, hit_record& rec) const {
