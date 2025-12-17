@@ -27,10 +27,13 @@ int main() {
     cam.samples_per_pixel = 25;
     cam.max_depth = 15;
 
-    cam.lookfrom = point(-0.9, 3.0, -3.3);
-    cam.lookat = point(-0.9, 2.5, 0);
+    // cam.lookfrom = point(-0.9, 3.0, -3.3);
+    // cam.lookat = point(-0.9, 2.5, 0);
+    auto look_at = point(-2, 2, -4);
+    cam.lookfrom = point(-4, 2, 0);
+    cam.lookat = look_at;
     cam.vup = vec( 0, 1, 0);
-    cam.vfov = 70;
+    cam.vfov = 50;
 
     cam.defocus_angle = 0.4;
     cam.focus_dist = (cam.lookfrom - cam.lookat).length(); // or 2.5
@@ -55,18 +58,22 @@ int main() {
     auto material_center = std::make_shared<lambertian>(color(0.9, 0.3, 0.2));
     auto red = std::make_shared<lambertian>(color(1, 0.1, 0.1));
     
-    //lanter
+    //lantern
     auto mat_red = std::make_shared<metal>(color(0.9, 0.1, 0.1), 0.1);
     auto mat_white = std::make_shared<metal>(color(1, 1, 1), 0.1);
     
-    //auto rock = std::make_shared<lambertian>(color(0.3, 0.3, 0.3));
     auto glass1 = std::make_shared<dielectric>(1.5);
     auto blue_glass = std::make_shared<glass>(1.5, color(0.8, 0.85, 1));
+    auto snow = std::make_shared<metal>(color(0.9, 0.9, 1), 0);
     auto material_bubble = std::make_shared<dielectric>(1.00 / 1.50);
     auto metal_material  = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.01);
   
     //snowflake
-    world.add(std::make_shared<snowflake>(point(-3,1.5,0), 2, 3, mat_red));
+    world.add(std::make_shared<snowflake>(look_at, 3, 3, snow));
+
+    world.add(std::make_shared<snowflake>(point(3, 1.5, -6), 0.5, 3, snow));
+    world.add(std::make_shared<snowflake>(point(-4.5, 2, -5), 0.5, 3, snow));
+    world.add(std::make_shared<snowflake>(point(1, 3, -4), 0.5, 3, snow));
 
     ////the scene
 
@@ -75,6 +82,8 @@ int main() {
     //world.add(std::make_shared<rock_floor>(point(0, 0, 0), 5, 2, 10, 10, rock_material));// rocky floor
     float start_point_x = 0.0;
     float start_point_z = 0.0;
+
+
     //main shape
     //world.add(std::make_shared<shape>(point(start_point_x, 0, start_point_z), 0.6, 0.3, 2.5, striped_material, true)); // base
     
@@ -92,7 +101,7 @@ int main() {
     world.add(std::make_shared<cylinder>(point(start_point_x, 3.1, start_point_z), 0.3, 0.05, mat_red, false)); // base
     world.add(std::make_shared<cylinder>(point(start_point_x, 2.9, start_point_z), 0.29, 0.2, blue_glass , true)); // window
     //world.add(std::make_shared<cone>(point(0, 3.5, 0), 0.43, 0.35 , red)); // roof
-    world.add(std::make_shared<shape>(point(start_point_x, 3.15, start_point_z), 0.43, 0.0, 0.35 , mat_red, true)); // roof
+    world.add(std::make_shared<shape>(point(start_point_x, 3.15, start_point_z), 0.43, 0.02, 0.35 , mat_red, true)); // roof
 
 
     // //details
@@ -121,19 +130,28 @@ int main() {
     //world.add(std::make_shared<sphere>(point( 1.0,    0.0, -1.0),   0.5, material_right));
     
     
-    world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.5, material_bubble));
-    world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.7, glass1));
+    // world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.5, material_bubble));
+    // world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.7, glass1));
+
+    world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.01, material_bubble));
+    world.add(std::make_shared<sphere>(point(1.0, 2.0, -1.0),   0.02, glass1));
+
+    world.add(std::make_shared<sphere>(point(-1.5, 3.0, -1.0),   0.01, material_bubble));
+    world.add(std::make_shared<sphere>(point(-1.5, 3.0, -1.0),   0.02, glass1));
+
+    world.add(std::make_shared<sphere>(point(-0.5, 1.0, -1.0),   0.01, material_bubble));
+    world.add(std::make_shared<sphere>(point(-0.5, 1.0, -1.0),   0.02, glass1));
     //world.add(std::make_shared<sphere>(point(-3.0, 2.0, -1.0),   0.9, metal_material));
 
     world.add(std::make_shared<sphere>(point(start_point_x, 2.95 ,start_point_z), 0.07, light));
-    world.add(std::make_shared<sphere>(point(-10, 10, 20), 2, sunlight));
+    world.add(std::make_shared<sphere>(point(5, 7, 25), 2, sunlight));
 
 
     IMAGE img(1000, 16.0 / 9.0);
     std::vector<uint8_t> pixels(img.width * img.height * 3);
     cam.render(world, pixels);
     OutputMode mode = OutputMode::PPM_FILE;
-    output_image(mode, img, pixels, "snowflake_wip.ppm");
+    output_image(mode, img, pixels, "render1.ppm");
     //handle_image(cam.sdl_image);
 
     return 0;
